@@ -1,0 +1,25 @@
+parameters:
+    ticketpark.expiring_url.creator.class: Ticketpark\ExpiringUrlBundle\Creator\Creator
+    ticketpark.expiring_url.checker.class: Ticketpark\ExpiringUrlBundle\Checker\Checker
+    ticketpark.expiring_url.router.class:  Ticketpark\ExpiringUrlBundle\Router\Router
+
+services:
+    ticketpark.expiring_url.creator:
+        class: %ticketpark.expiring_url.creator.class%
+        arguments: [%ticketpark.expiring_url.ttl%, %secret%]
+
+    ticketpark.expiring_url.router:
+        class: %ticketpark.expiring_url.router.class%
+        parent: router.default
+        public: false
+        calls:
+          - [setCreator, [@ticketpark.expiring_url.creator]]
+          - [setRouteParameterName, [%ticketpark.expiring_url.route_parameter%]]
+
+    # Event Listener
+    ticketpark.expiring_url.checker:
+        class: %ticketpark.expiring_url.checker.class%
+        arguments: [%secret%, @router, %ticketpark.expiring_url.route_parameter%]
+        scope: request
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 1 }

@@ -1,0 +1,27 @@
+{
+    "name": "ticketpark/expiring-url-bundle",
+    "type": "symfony-bundle",
+    "description": "Create urls which expire after a certain period.",
+    "keywords": ["excel"],
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Ticketpark contributors and others",
+            "homepage": "https://github.com/Ticketpark/ExpiringUrlBundle/contributors"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": "~2.3",
+        "symfony/yaml": "~2.3",
+        "apinstein/expiring-hash": "dev-master"
+    },
+
+    "autoload": {
+        "psr-0": { "Ticketpark\\ExpiringUrlBundle": "" }
+    },
+
+    "target-dir": "Ticketpark/ExpiringUrlBundle"
+}

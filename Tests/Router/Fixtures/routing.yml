@@ -1,0 +1,11 @@
+withHash_1:
+  pattern: /foo/{expirationHash}/bar
+  
+withHash_2:
+  pattern: /foo/{expirationHash}/bar/{dummy}  
+  
+noHash_1:
+  pattern: /foo/bar
+  
+noHash_2:
+  pattern: /foo/bar/{dummy}
