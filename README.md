@@ -100,7 +100,7 @@ The routing definition can be extended with two optional options:
       expiring_url_ttl: 30
 ```
 
-* `expiring_url_identifier`<br>Another url parameter which will be used to create a more specific expiration hash. Imagine you create an url like `/some/url/{expirationHash}/123`. Without adding the identifier, this url would also allows to access `/some/url/{expirationHash}/456` within the permitted time frame. However, adding the `expiring_url_identifier` option ensures that only `/some/url/{expirationHash}/123` will be accessible (and any other url using the same identifier) because there a more specific expiration hash will be created.
+* `expiring_url_identifier`<br>Another url parameter which will be used to create a more specific expiration hash. Imagine you create an url like `/some/url/{expirationHash}/123`. Without adding the identifier, this url would also allow to access `/some/url/{expirationHash}/456` within the permitted time frame. Adding the `expiring_url_identifier` option ensures that only `/some/url/{expirationHash}/123` will be accessible (and any other url using the same identifier) because a more specific expiration hash will be created.
 * `expiring_url_ttl`<br>The time-to-live of this url in minutes. Overrides the default time-to-live.
 
 ## License
