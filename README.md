@@ -7,10 +7,6 @@ This Symfony2 bundles creates urls with expiration hashes. This allows for an ur
 * Generated url:<br>
 `/some/url/2014-04-03T10:41:40+02:00.eaf378321b86d7ab2edb320be1be48672eb107562a3c8cebd3bc804620e1f4fe/123`
 
-## Todo
-* Write tests
-* Create stand-alone bundle
-
 ## Installation
 
 Add TicketparkExcelBundle in your composer.json:
