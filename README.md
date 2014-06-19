@@ -14,7 +14,7 @@ Add TicketparkExcelBundle in your composer.json:
 ```js
 {
     "require": {
-        "ticketpark/expiring-url-bundle": "0.1"
+        "ticketpark/expiring-url-bundle": "0.2"
     }
 }
 ```
@@ -35,7 +35,8 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Ticketpark\ExpiringUrlBundle\TicketparkExpiringUrlBundle()
+        new Ticketpark\ExpiringUrlBundle\TicketparkExpiringUrlBundle(),
+        new Ticketpark\FileBundle\TicketparkFileBundle(),
     );
 }
 ```

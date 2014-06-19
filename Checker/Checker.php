@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Router;
 use Ticketpark\ExpiringUrlBundle\Exception\UrlExpiredException;
+use Ticketpark\FileBundle\FileHandler\FileHandler;
 
 /**
  * Checker
@@ -19,11 +20,12 @@ use Ticketpark\ExpiringUrlBundle\Exception\UrlExpiredException;
  */
 class Checker
 {
-    public function __construct($secret, Router $router, $routeParameterName)
+    public function __construct($secret, Router $router, $routeParameterName, FileHandler $fileHandler)
     {
         $this->secret = $secret;
         $this->router = $router;
         $this->routeParameterName = $routeParameterName;
+        $this->fileHandler = $fileHandler;
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -33,8 +35,22 @@ class Checker
             return;
         }
 
+        // getRouteCollection() is sloooooow!
+        // So we cache the response.
+        // @fixme: How could this be solved better?
+        //
+        // https://github.com/symfony/symfony/issues/4436
+        // https://github.com/symfony/symfony/issues/11171
+
+        $identifier = 'ticketpark_expiring_bundle_route_collection';
+        if ($file = $this->fileHandler->fromCache($identifier)) {
+            $routeCollection = unserialize(file_get_contents($file));
+        } else {
+            $routeCollection = $this->router->getRouteCollection();
+            $this->fileHandler->cache(serialize($routeCollection), $identifier);
+        }
+
         $request         = $event->getRequest();
-        $routeCollection = $this->router->getRouteCollection();
         $route           = $routeCollection->get($request->get('_route'));
         $routeVariables  = $route->compile()->getVariables();
 

@@ -15,6 +15,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $this->router = new Router($this->getContainer(), 'routing.yml');
         $this->router->setCreator($this->getCreator());
         $this->router->setRouteParameterName('expirationHash');
+        $this->router->setFileHandler($this->getFileHandlerMock());
     }
 
     /**
@@ -78,6 +79,24 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function getCreator()
     {
         return new Creator(30, 'secret');
+    }
+    
+    public function getFileHandlerMock()
+    {
+        $fileHandler = $this->getMockBuilder('Ticketpark\FileBundle\FileHandler\FileHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('fromCache', 'cache'))
+            ->getMock();
+
+        $fileHandler->expects($this->any())
+            ->method('fromCache')
+            ->will($this->returnValue(false));
+
+        $fileHandler->expects($this->any())
+            ->method('cache')
+            ->will($this->returnValue('foo'));
+
+        return $fileHandler;
     }
 
     public function getContainer()

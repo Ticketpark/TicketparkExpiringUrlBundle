@@ -19,7 +19,7 @@ class CheckerTest extends \PHPUnit_Framework_TestCase
             'expirationHash'
         );
 
-        $this->checker = new Checker('secret', $this->getRouterMock(), 'expirationHash');
+        $this->checker = new Checker('secret', $this->getRouterMock(), 'expirationHash', $this->getFileHandlerMock());
     }
 
     /**
@@ -185,6 +185,24 @@ class CheckerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->routeVariables));
 
         return $compiledRoute;
+    }
+    
+    public function getFileHandlerMock()
+    {
+        $fileHandler = $this->getMockBuilder('Ticketpark\FileBundle\FileHandler\FileHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('fromCache', 'cache'))
+            ->getMock();
+
+        $fileHandler->expects($this->any())
+            ->method('fromCache')
+            ->will($this->returnValue(false));
+
+        $fileHandler->expects($this->any())
+            ->method('cache')
+            ->will($this->returnValue('foo'));
+
+        return $fileHandler;
     }
 
     public function getRequestParameter()

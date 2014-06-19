@@ -16,7 +16,8 @@
         "php": ">=5.3.3",
         "symfony/framework-bundle": "~2.3",
         "symfony/yaml": "~2.3",
-        "apinstein/expiring-hash": "dev-master"
+        "apinstein/expiring-hash": "dev-master",
+        "ticketpark/file-bundle": "0.1"
     },
 
     "autoload": {

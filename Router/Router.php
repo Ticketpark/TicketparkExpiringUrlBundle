@@ -4,6 +4,7 @@ namespace Ticketpark\ExpiringUrlBundle\Router;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router as BaseRouter;
 use Ticketpark\ExpiringUrlBundle\Creator\Creator;
+use Ticketpark\FileBundle\FileHandler\FileHandler;
 
 /**
  * Router
@@ -41,6 +42,13 @@ class Router extends BaseRouter
     protected $routeParameterName;
 
     /**
+     * FileHandler, to handle caching
+     *
+     * @var FileHandler
+     */
+    protected $fileHandler;
+
+    /**
      * Set Creator
      *
      * @param Creator $creator
@@ -61,6 +69,16 @@ class Router extends BaseRouter
     }
 
     /**
+     * Set file handler
+     *
+     * @param FileHandler $fileHandler
+     */
+    public function setFileHandler(FileHandler $fileHandler)
+    {
+        $this->fileHandler = $fileHandler;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
@@ -73,7 +91,21 @@ class Router extends BaseRouter
             throw new \InvalidArgumentException('You must set a route parameter first with setRouteParameter()');
         }
 
-        $routeCollection = $this->getRouteCollection();
+        // getRouteCollection() is sloooooow!
+        // So we cache the response.
+        // @fixme: How could this be solved better?
+        //
+        // https://github.com/symfony/symfony/issues/4436
+        // https://github.com/symfony/symfony/issues/11171
+
+        $identifier = 'ticketpark_expiring_bundle_route_collection';
+        if ($file = $this->fileHandler->fromCache($identifier)) {
+            $routeCollection = unserialize(file_get_contents($file));
+        } else {
+            $routeCollection = $this->getRouteCollection();
+            $this->fileHandler->cache(serialize($routeCollection), $identifier);
+        }
+
         $route           = $routeCollection->get($name);
         $routeVariables  = $route->compile()->getVariables();
 
