@@ -48,6 +48,14 @@ class Router extends BaseRouter
      */
     protected $fileHandler;
 
+
+    /**
+     * RouteCollection, from cache for performance reasons
+     *
+     * @var RouteCollection
+     */
+    protected $routeCollection;
+
     /**
      * Set Creator
      *
@@ -98,15 +106,17 @@ class Router extends BaseRouter
         // https://github.com/symfony/symfony/issues/4436
         // https://github.com/symfony/symfony/issues/11171
 
-        $identifier = 'ticketpark_expiring_bundle_route_collection';
-        if ($file = $this->fileHandler->fromCache($identifier)) {
-            $routeCollection = unserialize(file_get_contents($file));
-        } else {
-            $routeCollection = $this->getRouteCollection();
-            $this->fileHandler->cache(serialize($routeCollection), $identifier);
+        if (null == $this->routeCollection) {
+            $identifier = 'ticketpark_expiring_bundle_route_collection';
+            if ($file = $this->fileHandler->fromCache($identifier)) {
+                $this->routeCollection = unserialize(file_get_contents($file));
+            } else {
+                $this->routeCollection = $this->getRouteCollection();
+                $this->fileHandler->cache(serialize($routeCollection), $identifier);
+            }
         }
 
-        $route           = $routeCollection->get($name);
+        $route           = $this->routeCollection->get($name);
         $routeVariables  = $route->compile()->getVariables();
 
         if (
