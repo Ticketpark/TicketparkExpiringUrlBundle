@@ -112,7 +112,7 @@ class Router extends BaseRouter
                 $this->routeCollection = unserialize(file_get_contents($file));
             } else {
                 $this->routeCollection = $this->getRouteCollection();
-                $this->fileHandler->cache(serialize($routeCollection), $identifier);
+                $this->fileHandler->cache(serialize($this->routeCollection), $identifier);
             }
         }
 
