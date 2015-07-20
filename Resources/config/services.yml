@@ -16,6 +16,7 @@ services:
           - [setCreator, [@ticketpark.expiring_url.creator]]
           - [setRouteParameterName, [%ticketpark.expiring_url.route_parameter%]]
           - [setFileHandler, [@ticketpark.file.handler]]
+          - [setParentRouter, [@ticketpark.expiring_url.router.parent]]
 
     # Event Listener
     ticketpark.expiring_url.checker:

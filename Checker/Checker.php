@@ -2,11 +2,10 @@
 
 namespace Ticketpark\ExpiringUrlBundle\Checker;
 
-use Symfony\Component\HttpFoundation\Response;
+use JMS\I18nRoutingBundle\Router\I18nRouter;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Ticketpark\ExpiringUrlBundle\Exception\UrlExpiredException;
 use Ticketpark\FileBundle\FileHandler\FileHandler;
 
@@ -20,7 +19,7 @@ use Ticketpark\FileBundle\FileHandler\FileHandler;
  */
 class Checker
 {
-    public function __construct($secret, Router $router, $routeParameterName, FileHandler $fileHandler)
+    public function __construct($secret, RouterInterface $router, $routeParameterName, FileHandler $fileHandler)
     {
         $this->secret = $secret;
         $this->router = $router;
@@ -50,8 +49,14 @@ class Checker
             $this->fileHandler->cache(serialize($routeCollection), $identifier);
         }
 
-        $request         = $event->getRequest();
-        $route           = $routeCollection->get($request->get('_route'));
+        $request = $event->getRequest();
+        $route = $routeCollection->get($request->get('_route'));
+
+        // Explicit support for combination with JMSI18nRoutingBundle
+        if (!$route && $this->router->getParentRouter() instanceof I18nRouter) {
+            $route = $routeCollection->get($request->getLocale() . '__RG__' . $request->get('_route'));
+        }
+
         $routeVariables  = $route->compile()->getVariables();
 
         if (in_array($this->routeParameterName, $routeVariables)) {
@@ -63,7 +68,7 @@ class Checker
             }
 
             $expiringHash = new \ExpiringHash($secret);
-            if ('ok' !== $expiringHash->validate($request->get('expirationHash'))) {
+            if ('ok' !== $expiringHash->validate($request->get($this->routeParameterName))) {
 
                 throw new UrlExpiredException();
 
