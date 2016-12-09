@@ -1,5 +1,7 @@
 # TicketparkExpiringUrlBundle
 
+**THIS BUNDLE IS NO LONGER MAINTAINED. IT IS SLOW AND WAS NOT DONE WELL. USE AT OWN RISK!**
+
 This Symfony2 bundles creates urls with expiration hashes. This allows for an url to become invalid after a certain time.
 
 ### Example:<br>
